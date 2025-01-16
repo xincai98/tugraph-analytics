@@ -35,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AuthenticationService {
 
-    private static final int TOKEN_EXPIRED_SECONDS = 24 * 60 * 60;
+    private static final int TOKEN_EXPIRED_SECONDS = 24 * 60 * 60 * 365;
 
     @Autowired
     private UserDao userDao;
@@ -79,7 +79,7 @@ public class AuthenticationService {
 
             // create or reuse authentication
             GeaflowAuthentication authentication = convert(entity);
-            if (!authentication.isExpired(TOKEN_EXPIRED_SECONDS) && authentication.isSystemSession() == systemLogin) {
+            if (!authentication.isExpired(TOKEN_EXPIRED_SECONDS)) {
                 updateAccessTime(userId);
 
             } else {

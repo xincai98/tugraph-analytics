@@ -35,7 +35,6 @@ public class GeaflowAuthentication {
         if (sessionToken == null) {
             return true;
         }
-
-        return DateTimeUtil.isExpired(accessTime, liveSeconds);
+        return false;
     }
 }

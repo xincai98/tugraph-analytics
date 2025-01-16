@@ -68,6 +68,7 @@ public class OdpsTableSource implements TableSource, EnablePartitionPushDown {
 
     private int timeoutSeconds = 60;
     private String endPoint;
+    private String tunnelEndpoint;
     private String project;
     private String tableName;
     private String accessKey;
@@ -91,6 +92,7 @@ public class OdpsTableSource implements TableSource, EnablePartitionPushDown {
         this.tableName = tableConf.getString(OdpsConfigKeys.GEAFLOW_DSL_ODPS_TABLE);
         this.accessKey = tableConf.getString(OdpsConfigKeys.GEAFLOW_DSL_ODPS_ACCESS_KEY);
         this.accessId = tableConf.getString(OdpsConfigKeys.GEAFLOW_DSL_ODPS_ACCESS_ID);
+        this.tunnelEndpoint = tableConf.getString(OdpsConfigKeys.GEAFLOW_DSL_TUNNEL_ENDPOINT);
         this.shardNamePrefix = project + "-" + tableName + "-";
         this.timeoutSeconds = tableConf.getInteger(OdpsConfigKeys.GEAFLOW_DSL_ODPS_TIMEOUT_SECONDS);
 
@@ -104,8 +106,8 @@ public class OdpsTableSource implements TableSource, EnablePartitionPushDown {
         checkArguments();
 
         LOGGER.info("init with config: {}, \n schema: {}\n"
-                + "endPoint : {}, project : {}, tableName : {}",
-            tableConf, tableSchema, endPoint, project, tableName);
+                + "endPoint : {}, project : {}, tableName : {}, tunnel endpoint: {}",
+            tableConf, tableSchema, endPoint, project, tableName, tunnelEndpoint);
     }
 
     @Override
@@ -115,6 +117,10 @@ public class OdpsTableSource implements TableSource, EnablePartitionPushDown {
         odps.setEndpoint(endPoint);
         odps.setDefaultProject(project);
         this.tunnel = new TableTunnel(odps);
+    if (tunnelEndpoint != null && !tunnelEndpoint.isEmpty()) {
+        tunnel.setEndpoint(tunnelEndpoint);
+        LOGGER.info("set tunnel endpoint: {}", tunnelEndpoint);
+    }
         this.partition2DownloadSession = new HashMap<>();
         this.table = odps.tables().get(project, tableName);
         for (TableField field : partitionSchema.getFields()) {

@@ -20,11 +20,13 @@ import com.antgroup.geaflow.common.config.Configuration;
 import com.antgroup.geaflow.common.exception.GeaflowRuntimeException;
 import com.antgroup.geaflow.common.rpc.HostAndPort;
 import com.antgroup.geaflow.metaserver.client.MetaServerQueryClient;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +71,13 @@ public abstract class AbstractQueryRunner implements IQueryRunner {
             LOGGER.info("init single analytics service: [{}] finish", serverName);
             return;
         }
-        this.serverQueryClient = MetaServerQueryClient.getClient(config);
+        synchronized (AbstractQueryRunner.class) {
+            if (this.serverQueryClient == null) {
+                this.serverQueryClient = new MetaServerQueryClient(config);
+                LOGGER.info("create server query client");
+            }
+        }
+//        this.serverQueryClient = MetaServerQueryClient.getClient(config);
         List<HostAndPort> serviceAddresses = getServiceAddresses();
         this.coordinatorAddresses = serviceAddresses;
         this.analyticsServiceInfo = new AnalyticsServiceInfo(serviceAddresses);

@@ -43,6 +43,11 @@ public class OdpsConfigKeys {
         .noDefaultValue()
         .description("The odps endpoint.");
 
+    public static final ConfigKey GEAFLOW_DSL_TUNNEL_ENDPOINT = ConfigKeys
+            .key("geaflow.dsl.odps.tunnel.endpoint")
+            .noDefaultValue()
+            .description("The odps endpoint.");
+
     public static final ConfigKey GEAFLOW_DSL_ODPS_PARTITION_SPEC = ConfigKeys
         .key("geaflow.dsl.odps.partition.spec")
         .defaultValue("")
