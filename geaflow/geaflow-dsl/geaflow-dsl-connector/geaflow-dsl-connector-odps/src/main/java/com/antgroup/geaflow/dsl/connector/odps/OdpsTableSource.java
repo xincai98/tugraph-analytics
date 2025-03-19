@@ -26,6 +26,9 @@ import com.aliyun.odps.tunnel.TableTunnel.DownloadSession;
 import com.aliyun.odps.tunnel.TunnelException;
 import com.antgroup.geaflow.api.context.RuntimeContext;
 import com.antgroup.geaflow.common.config.Configuration;
+import com.antgroup.geaflow.common.type.IType;
+import com.antgroup.geaflow.common.type.primitive.StringType;
+import com.antgroup.geaflow.common.utils.CollectionUtil;
 import com.antgroup.geaflow.dsl.common.data.Row;
 import com.antgroup.geaflow.dsl.common.data.impl.ObjectRow;
 import com.antgroup.geaflow.dsl.common.exception.GeaFlowDSLException;
@@ -48,7 +51,10 @@ import com.antgroup.geaflow.dsl.connector.odps.utils.OdpsRecordWithPartitionSpec
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,6 +146,10 @@ public class OdpsTableSource implements TableSource, EnablePartitionPushDown {
         }
         for (TableField field : ((TableSchema) schema).getDataSchema().getFields()) {
             String fieldName = field.getName();
+            if ("dt".equals(fieldName)) {
+                partitionSchema.addField(new TableField("dt", new StringType()));
+                continue;
+            }
             if (this.table.getSchema().getColumn(fieldName) != null && !OdpsConnectorUtils.typeEquals(
                 this.table.getSchema().getColumn(fieldName).getTypeInfo().getOdpsType(),
                 field.getType())) {
@@ -174,6 +184,17 @@ public class OdpsTableSource implements TableSource, EnablePartitionPushDown {
             List<com.aliyun.odps.Partition> odpsPartitions = new ArrayList<>();
             List<PartitionSpec> partitionSpecs ;
             List<PartitionSpec> allPartitions = table.getPartitionSpecs();
+            try {
+                PartitionSpec maxPartitionSpec = allPartitions.stream()
+                        .max(Comparator.comparing(partitionSpec ->
+                                LocalDate.parse(partitionSpec.get("dt"), DateTimeFormatter.ofPattern("yyyyMMdd"))))
+                        .orElseThrow(() -> new RuntimeException("PartitionSpec 列表为空"));
+                LOGGER.info("max partition: {}", maxPartitionSpec.get("dt"));
+                allPartitions = new ArrayList<>();
+                allPartitions.add(maxPartitionSpec);
+            } catch (RuntimeException e) {
+                LOGGER.info(e.toString());
+            }
             if (partitionFilter == null || partitionSchema == null) {
                 partitionSpecs = allPartitions;
             } else {

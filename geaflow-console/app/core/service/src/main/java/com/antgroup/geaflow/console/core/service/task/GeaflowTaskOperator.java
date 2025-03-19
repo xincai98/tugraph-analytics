@@ -14,6 +14,7 @@
 
 package com.antgroup.geaflow.console.core.service.task;
 
+import static com.antgroup.geaflow.console.common.util.type.GeaflowJobType.SERVE;
 import static com.antgroup.geaflow.console.common.util.type.GeaflowTaskStatus.FAILED;
 import static com.antgroup.geaflow.console.common.util.type.GeaflowTaskStatus.RUNNING;
 import static com.antgroup.geaflow.console.common.util.type.GeaflowTaskStatus.STARTING;
@@ -21,10 +22,12 @@ import static com.antgroup.geaflow.console.common.util.type.GeaflowTaskStatus.ST
 import com.alibaba.fastjson.JSON;
 import com.antgroup.geaflow.console.common.dal.model.PageList;
 import com.antgroup.geaflow.console.common.util.DateTimeUtil;
+import com.antgroup.geaflow.console.common.util.FileUtil;
 import com.antgroup.geaflow.console.common.util.Fmt;
 import com.antgroup.geaflow.console.common.util.type.GeaflowOperationType;
 import com.antgroup.geaflow.console.common.util.type.GeaflowPluginType;
 import com.antgroup.geaflow.console.common.util.type.GeaflowTaskStatus;
+import com.antgroup.geaflow.console.core.model.config.GeaflowConfig;
 import com.antgroup.geaflow.console.core.model.metric.GeaflowMetric;
 import com.antgroup.geaflow.console.core.model.metric.GeaflowMetricMeta;
 import com.antgroup.geaflow.console.core.model.metric.GeaflowMetricQueryRequest;
@@ -52,6 +55,8 @@ import com.antgroup.geaflow.console.core.service.store.factory.DataStoreFactory;
 import com.antgroup.geaflow.console.core.service.store.factory.HaMetaStoreFactory;
 import com.antgroup.geaflow.console.core.service.store.factory.MetricStoreFactory;
 import com.antgroup.geaflow.console.core.service.store.factory.RuntimeMetaStoreFactory;
+
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -164,6 +169,9 @@ public class GeaflowTaskOperator {
         GeaflowPluginConfig dataConfig = task.getDataPluginConfig();
         GeaflowDataStore dataStore = dataStoreFactory.getDataStore(dataConfig.getType());
         dataStore.cleanTaskData(task);
+        String s = "/tmp/geaflow" + task.getId();
+        FileUtil.delete(s);
+        log.info("delete task graph data: {}", s);
         return true;
     }
 

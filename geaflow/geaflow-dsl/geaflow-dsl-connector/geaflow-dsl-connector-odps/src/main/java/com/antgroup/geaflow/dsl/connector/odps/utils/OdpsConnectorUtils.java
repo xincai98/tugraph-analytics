@@ -41,7 +41,7 @@ public class OdpsConnectorUtils {
             case INT:
                 return itype instanceof LongType || itype instanceof IntegerType;
             case BIGINT:
-                return itype instanceof IntegerType;
+                return itype instanceof LongType;
             case FLOAT:
                 return itype instanceof FloatType || itype instanceof DoubleType;
             case DOUBLE:
