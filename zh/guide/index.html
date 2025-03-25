@@ -11,7 +11,7 @@
 <link rel="search" type="application/opensearchdescription+xml" title="TuGraph Analytics" href="/tugraph-analytics/opensearch.xml">
 
 <meta name="algolia-site-verification" content="4AB782AC2021573E"><link rel="stylesheet" href="/tugraph-analytics/assets/css/styles.58f3a227.css">
-<script src="/tugraph-analytics/assets/js/runtime~main.3d72a628.js" defer="defer"></script>
+<script src="/tugraph-analytics/assets/js/runtime~main.0607914c.js" defer="defer"></script>
 <script src="/tugraph-analytics/assets/js/main.85c50c04.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -26,11 +26,11 @@
 <ol>
 <li>准备Git、JDK8、Maven、Docker环境。</li>
 <li>下载源码：<code>git clone https://github.com/TuGraph-family/tugraph-analytics</code></li>
-<li>项目构建：<code>./build.sh --module=gealfow --output=package</code></li>
+<li>项目构建：<code>./build.sh --module=geaflow --output=package</code></li>
 <li>测试任务：<code>./bin/gql_submit.sh --gql geaflow/geaflow-examples/gql/loop_detection_file_demo.sql</code></li>
 </ol>
 <p>第二步 启动控制台，体验白屏提交quick start任务
-5. 构建控制台jar和镜像(需启动Docker)：<code>./build.sh --module=gealfow-console</code>
+5. 构建控制台jar和镜像(需启动Docker)：<code>./build.sh --module=geaflow-console</code>
 6. 启动控制台：<code>docker run -d --name geaflow-console -p 8888:8888 geaflow-console:0.1</code></p>
 <p>更多详细内容请参考：<a href="/tugraph-analytics/zh/quick_start/quick_start">快速上手文档</a>。</p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="开发手册">开发手册<a href="#开发手册" class="hash-link" aria-label="Direct link to 开发手册" title="Direct link to 开发手册">​</a></h2>
